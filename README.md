@@ -1,28 +1,26 @@
-# Agentic Flow Communication
+# AgenticAI
 
-This project demonstrates an agentic flow communication system. Below is a sequence flow diagram illustrating the communication between the main components.
+This repository showcases an experimental Model Context Protocol (MCP) server implementation that dynamically generates MCP tools from Swagger/OpenAPI specifications. This is a groundbreaking approach to achieving dynamic tool implementation in MCP, where traditionally tools were statically defined.
+
+## Features
+- Dynamic MCP tool generation from swagger.json input
+- First experimental implementation of dynamic tool creation in MCP
+- Server-Sent Events (SSE) integration for real-time updates
+- Example scripts demonstrating dynamic tool usage
+- Jupyter notebook for testing and experimentation
 
 ## Sequence Flow Diagram
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant Agent
-    participant Environment
-    participant TaskManager
 
-    User->>Agent: Submit request
-    Agent->>TaskManager: Parse and delegate task
-    TaskManager->>Environment: Query environment/context
-    Environment-->>TaskManager: Return context/data
-    TaskManager-->>Agent: Task result
-    Agent-->>User: Respond with result
-```
+## Usage
+- Run the MCP server: `python myserver.py`
+- Experiment with code in `Notebook.ipynb`
+- Explore other scripts for additional features
 
-## Description
-- **User**: Initiates a request or query.
-- **Agent**: Receives the request, interprets it, and coordinates the flow.
-- **TaskManager**: Handles task delegation, context management, and communication with the environment.
-- **Environment**: Provides necessary data or context for task execution.
+## Requirements
+- Python 3.8+
+- (Optional) Install dependencies: `pip install -r requirements.txt`
 
-This diagram helps visualize the step-by-step communication and data flow in an agentic system.
+---
+
+For more details, see the code and comments in each file.

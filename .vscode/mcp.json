@@ -1,0 +1,14 @@
+{
+	"servers": {
+		"swagger": {
+			"url": "http://localhost:8000",
+			"type": "http"
+		},
+		"samp2": {
+			"type": "stdio",
+			"command": "/Users/tarun/Desktop/Sic/AgenticAI/.venv/bin/python3",
+			"args": [ "myserver.py"]
+		}
+	},
+	"inputs": []
+}
