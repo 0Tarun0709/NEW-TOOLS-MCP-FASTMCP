@@ -13,7 +13,8 @@ This repository showcases an experimental Model Context Protocol (MCP) server im
 
 
 ## Usage
-- Run the MCP server: `python myserver.py`
+- Run a Sample FastAPI server: `python sample-fastapi-server.py`
+- Run the MCP server: `python sse-server.py`
 - Experiment with code in `Notebook.ipynb`
 - Explore other scripts for additional features
 

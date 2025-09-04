@@ -8,3 +8,9 @@ where with the decortor `@mcp.tool()` this imples and static decalrtion of the t
 5. make a new notebook and playaround with the methods in FASTMCP, can be a groundbreaking tools if mastered.
 
 note: `SWAGGER-MCP` is already an Existing project in the Github, and this attempt is to break through the logic behind it and host it as an SSE server and Auth and Authorization to it..
+
+## Commit-2
+ Automated the Flow with Object contianed the predefined infor requested to make a Request.
+ the code is pretty naive, its still in the experimental setp. Code brushing is needed.
+
+`next goal`: Beautify the Code, make a script tht can extract the header, data, input scheme from the openapi.json file.
