@@ -31,13 +31,6 @@ input_scheme=[
         
             "required": ["a", "b"]
         
-    },
-    {
-        "type":"object",
-        "properties":{
-            "state":{"type":"string","description":"Enter the State Code of US states"}    
-        },
-        "required": ["state"]
     }
 ]
 
@@ -57,6 +50,20 @@ def register_handlers():
         logger.info("Listing available tools")
         tools = []
         
+
+            # Skip deprecated endpoints
+            # Add logic to extract details from OPENAPI swagger json file
+            
+        # Create input schema from the endpoint's combined parameter schema
+        # input_schema = {
+        #     "type": "object",
+        #     "properties": {
+        #     "a": {"type": "integer", "description": "First integer to add"},
+        #     "b": {"type": "integer", "description": "Second integer to add"}
+        #     },
+        #     "required": ["a", "b"]
+        # }
+        
         # Create the tool definition
         tool = Tool(
             name="ADD",
@@ -66,65 +73,48 @@ def register_handlers():
             name='Multiply',
             inputSchema=input_scheme[1]
         )
-        tool3=Tool(
-            name="weather",
-            inputSchema=input_scheme[2]
-        )
-        
         tools.append(tool)
         tools.append(tool2)
-        tools.append(tool3)
         logger.info(f"Total tools available: {len(tools)}")
         return tools
-    tool_config = {
-        "ADD": {
-            "endpoint": "add",
-            "build_data": lambda args: {
-                "a": args.get("a"),
-                "b": args.get("b")
-            }
-        },
-        "Multiply": {
-            "endpoint": "multiply",
-            "build_data": lambda args: {
-                "a": args.get("a"),
-                "b": args.get("b")
-            }
-        },
-        "weather": {
-            "endpoint": "get_alerts",
-            "build_data": lambda args: {
-                "state": args.get("state")
-            }
-        }
-    }
+
     @mcp.call_tool()
     async def call_tool(name: str, arguments: dict | None):
         try:
-            # Map tool names to their corresponding endpoints
-            if name not in tool_config:
-                raise ValueError(f"Unknown tool: {name}")
-
-
-            config = tool_config[name]
-            url = f"http://localhost:8000/{config['endpoint']}"
-            headers = {
-                "accept": "application/json",
-                "Content-Type": "application/json"
-            }
-
-            # Build the request data dynamically
-            data = config["build_data"](arguments or {})
-
-            response = requests.post(url, json=data, headers=headers)
-            response.raise_for_status()
-
-            return [TextContent(type="text", text=response.text)]
-
+            if name == 'ADD':
+                url = "http://localhost:8000/add"  # Replace with your endpoint URL
+                data = {
+                    'a': arguments.get('a', 100),
+                    'b': arguments.get('b', 100)
+                }
+                headers = {
+                    'accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+                response = requests.post(url, json=data, headers=headers)
+                return [TextContent(type="text", text=response.text)]
+            if name == 'Multiply':
+                url = "http://localhost:8000/multiply"  # Replace with your endpoint URL
+                data = {
+                    'a': arguments.get('a', 100),
+                    'b': arguments.get('b', 100)
+                }
+                headers = {
+                    'accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+                response = requests.post(url, json=data, headers=headers)
+                return [TextContent(type="text", text=response.text)]
         except Exception as e:
             logger.error(f"Error calling tool {name}: {e}")
             return [TextContent(type="text", text=f"Error calling tool {name}: {str(e)}")]
 
+                
+        except Exception as e:
+            logger.error(f"Error calling tool {name}: {e}")
+            # error_trace = traceback.format_exc()
+            # logger.error(f"Traceback: {error_trace}")
+            return f'[TextContent(type="text", text=f"Error calling tool {name}: {str(e)}\n")]'
 
 # For the purposes of testing, return the handlers so they can be manually invoked by tests
     return { "list_tools": list_tools, "call_tool": call_tool }
@@ -148,7 +138,19 @@ async def handle_sse(request):
 
 async def main():
   register_handlers()
-
+    # async with stdio_server() as (read_stream, write_stream):
+    #     await mcp.run(
+    #         read_stream,
+    #         write_stream,
+    #         InitializationOptions(
+    #             server_name="your_server_name",
+    #             server_version="your_version",
+    #             capabilities=mcp.get_capabilities(
+    #                 notification_options=NotificationOptions(),
+    #                 experimental_capabilities={},
+    #             ),
+    #         ),
+    #     )
   
 if __name__ =="__main__":
     # register_handlers()
@@ -161,14 +163,17 @@ if __name__ =="__main__":
         Mount("/messages/", app=sse.handle_post_message),
     ]
 
+    # Define handler functions
 
+    # Create and run Starlette app
+     # Create and run Starlette app
     starlette_app = Starlette(routes=routes)
     # starlette_app = starlette(routes=routes)
     uvicorn.run(starlette_app, host="localhost", port=8001)
 
     
     
-# Execution Code for the
+
 # @server.call_tool()
 # async def handle_call_tool(
 #     name: str, arguments: dict | None

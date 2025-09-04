@@ -23,12 +23,19 @@ async def forecast(latitude: float, longitude: float):
     from weather import get_forecast
     return await get_forecast(latitude ,longitude)
 
+# @app.post("/get_alerts")
+# async def alerts(state: str):
+#     from weather import get_alerts
+#     return await get_alerts(state)
+class WeatherRequest(BaseModel):
+    state: str
 @app.post("/get_alerts")
-async def alerts(state: str):
+async def alerts(req: WeatherRequest):
     from weather import get_alerts
-    return await get_alerts(state)
-    
+    return await get_alerts(req.state)    
+
 
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)
+    
