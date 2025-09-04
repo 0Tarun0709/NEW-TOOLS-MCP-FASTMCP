@@ -16,11 +16,12 @@ import uvicorn
 input_scheme=[
     {
         "type": "object",
-            "properties": {
-            "a": {"type": "integer", "description": "First integer to add"},
-            "b": {"type": "integer", "description": "Second integer to add"}
-            },
-            "required": ["a", "b"]
+            'properties': {'a': {'type': 'number', 'title': 'A'}, 
+                           'b': {'type': 'number', 'title': 'B'}}, 
+            'type': 'object', 
+            'required': ['a', 'b'], 
+            'title': 'Numbers',
+            # "required": ["a", "b"]
     },
     {
         "type": "object",

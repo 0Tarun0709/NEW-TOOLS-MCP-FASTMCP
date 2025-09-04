@@ -14,3 +14,11 @@ note: `SWAGGER-MCP` is already an Existing project in the Github, and this attem
  the code is pretty naive, its still in the experimental setp. Code brushing is needed.
 
 `next goal`: Beautify the Code, make a script tht can extract the header, data, input scheme from the openapi.json file.
+
+### Making of parser
+waht do i need from Parser?
+* Input scheme
+* Header
+* endpoint (Main pripority?)
+* Data
+

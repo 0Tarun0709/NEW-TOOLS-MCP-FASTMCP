@@ -1,0 +1,271 @@
+[
+    {"name": "add_add_post",
+    "title": null,
+    "description": null,
+    "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": []
+    },
+    "outputSchema": null,
+    "annotations": null,
+    "meta": null}
+    ,
+    {
+        "name": "multiply_multiply_post",
+        "title": null,
+        "description": null,
+        "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "required": []
+        },
+        "outputSchema": null,
+        "annotations": null,
+        "meta": null
+    },
+    {
+        "openapi": "3.1.0",
+        "info": {
+            "title": "FastAPI",
+            "version": "0.1.0"
+        },
+        "paths": {
+            "/add": {
+                "post": {
+                    "summary": "Add",
+                    "operationId": "add_add_post",
+                    "requestBody": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Numbers"
+                                }
+                            }
+                        },
+                        "required": true
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Successful Response",
+                            "content": {
+                                "application/json": {
+                                    "schema": {}
+                                }
+                            }
+                        },
+                        "422": {
+                            "description": "Validation Error",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/HTTPValidationError"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "/multiply": {
+                "post": {
+                    "summary": "Multiply",
+                    "operationId": "multiply_multiply_post",
+                    "requestBody": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Numbers"
+                                }
+                            }
+                        },
+                        "required": true
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Successful Response",
+                            "content": {
+                                "application/json": {
+                                    "schema": {}
+                                }
+                            }
+                        },
+                        "422": {
+                            "description": "Validation Error",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/HTTPValidationError"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "/get_forecast": {
+                "post": {
+                    "summary": "Forecast",
+                    "operationId": "forecast_get_forecast_post",
+                    "parameters": [
+                        {
+                            "name": "latitude",
+                            "in": "query",
+                            "required": true,
+                            "schema": {
+                                "type": "number",
+                                "title": "Latitude"
+                            }
+                        },
+                        {
+                            "name": "longitude",
+                            "in": "query",
+                            "required": true,
+                            "schema": {
+                                "type": "number",
+                                "title": "Longitude"
+                            }
+                        }
+                    ],
+                    "responses": {
+                        "200": {
+                            "description": "Successful Response",
+                            "content": {
+                                "application/json": {
+                                    "schema": {}
+                                }
+                            }
+                        },
+                        "422": {
+                            "description": "Validation Error",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/HTTPValidationError"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "/get_alerts": {
+                "post": {
+                    "summary": "Alerts",
+                    "operationId": "alerts_get_alerts_post",
+                    "requestBody": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WeatherRequest"
+                                }
+                            }
+                        },
+                        "required": true
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Successful Response",
+                            "content": {
+                                "application/json": {
+                                    "schema": {}
+                                }
+                            }
+                        },
+                        "422": {
+                            "description": "Validation Error",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/HTTPValidationError"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "components": {
+            "schemas": {
+                "HTTPValidationError": {
+                    "properties": {
+                        "detail": {
+                            "items": {
+                                "$ref": "#/components/schemas/ValidationError"
+                            },
+                            "type": "array",
+                            "title": "Detail"
+                        }
+                    },
+                    "type": "object",
+                    "title": "HTTPValidationError"
+                },
+                "Numbers": {
+                    "properties": {
+                        "a": {
+                            "type": "number",
+                            "title": "A"
+                        },
+                        "b": {
+                            "type": "number",
+                            "title": "B"
+                        }
+                    },
+                    "type": "object",
+                    "required": [
+                        "a",
+                        "b"
+                    ],
+                    "title": "Numbers"
+                },
+                "ValidationError": {
+                    "properties": {
+                        "loc": {
+                            "items": {
+                                "anyOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "integer"
+                                    }
+                                ]
+                            },
+                            "type": "array",
+                            "title": "Location"
+                        },
+                        "msg": {
+                            "type": "string",
+                            "title": "Message"
+                        },
+                        "type": {
+                            "type": "string",
+                            "title": "Error Type"
+                        }
+                    },
+                    "type": "object",
+                    "required": [
+                        "loc",
+                        "msg",
+                        "type"
+                    ],
+                    "title": "ValidationError"
+                },
+                "WeatherRequest": {
+                    "properties": {
+                        "state": {
+                            "type": "string",
+                            "title": "State"
+                        }
+                    },
+                    "type": "object",
+                    "required": [
+                        "state"
+                    ],
+                    "title": "WeatherRequest"
+                }
+            }
+        }
+    }
+]
