@@ -12,39 +12,14 @@ from starlette.responses import Response
 from starlette.routing import Route, Mount
 from starlette.applications import Starlette
 import uvicorn
+from parser import parse_openapi_to_tools
+port=8000
 # global input_scheme
-input_scheme=[
-    {
-        "type": "object",
-            'properties': {'a': {'type': 'number', 'title': 'A'}, 
-                           'b': {'type': 'number', 'title': 'B'}}, 
-            'type': 'object', 
-            'required': ['a', 'b'], 
-            'title': 'Numbers',
-            # "required": ["a", "b"]
-    },
-    {
-        "type": "object",
-            "properties": {
-            "a": {"type": "integer", "description": "First integer to Multiply"},
-            "b": {"type": "integer", "description": "Second integer to Multiply"}
-            },
-        
-            "required": ["a", "b"]
-        
-    },
-    {
-        "type":"object",
-        "properties":{
-            "state":{"type":"string","description":"Enter the State Code of US states"}    
-        },
-        "required": ["state"]
-    }
-]
 
 mcp=Server(
     name="sample MCP without FASTMCP"
 )
+
 import logging as logger
 from mcp.types import TextContent
 def register_handlers():
@@ -55,67 +30,69 @@ def register_handlers():
         #
         # NEED TO IMPORT AN FUNCTION WHICH TAKES THE .json as input and Fetches
         # the endpoints Arguments, parameters into it.
-        logger.info("Listing available tools")
-        tools = []
+        # logger.info("Listing available tools")
+        # tools = []
         
-        # Create the tool definition
-        tool = Tool(
-            name="ADD",
-            inputSchema=input_scheme[0]
-        )
-        tool2=Tool(
-            name='Multiply',
-            inputSchema=input_scheme[1]
-        )
-        tool3=Tool(
-            name="weather",
-            inputSchema=input_scheme[2]
-        )
+        # # Create the tool definition
+        # tool = Tool(
+        #     name="ADD",
+        #     inputSchema=input_scheme[0]
+        # )
+        # tool2=Tool(
+        #     name='Multiply',
+        #     inputSchema=input_scheme[1]
+        # )
+        # tool3=Tool(
+        #     name="weather",
+        #     inputSchema=input_scheme[2]
+        # )
         
-        tools.append(tool)
-        tools.append(tool2)
-        tools.append(tool3)
-        logger.info(f"Total tools available: {len(tools)}")
+        # tools.append(tool)
+        # tools.append(tool2)
+        # tools.append(tool3)
+        # logger.info(f"Total tools available: {len(tools)}")
+        # return tools
+        tools,tool_map=parse_openapi_to_tools(f"http://localhost:{port}/openapi.json")
         return tools
-    tool_config = {
-        "ADD": {
-            "endpoint": "add",
-            "build_data": lambda args: {
-                "a": args.get("a"),
-                "b": args.get("b")
-            }
-        },
-        "Multiply": {
-            "endpoint": "multiply",
-            "build_data": lambda args: {
-                "a": args.get("a"),
-                "b": args.get("b")
-            }
-        },
-        "weather": {
-            "endpoint": "get_alerts",
-            "build_data": lambda args: {
-                "state": args.get("state")
-            }
-        }
-    }
+    # tool_config = {
+    #     "ADD": {
+    #         "endpoint": "add",
+    #         "build_data": lambda args: {
+    #             "a": args.get("a"),
+    #             "b": args.get("b")
+    #         }
+    #     },
+    #     "Multiply": {
+    #         "endpoint": "multiply",
+    #         "build_data": lambda args: {
+    #             "a": args.get("a"),
+    #             "b": args.get("b")
+    #         }
+    #     },
+    #     "weather": {
+    #         "endpoint": "get_alerts",
+    #         "build_data": lambda args: {
+    #             "state": args.get("state")
+    #         }
+    #     }
+    # }
     @mcp.call_tool()
     async def call_tool(name: str, arguments: dict | None):
         try:
             # Map tool names to their corresponding endpoints
-            if name not in tool_config:
+            _,tool_map=parse_openapi_to_tools(f"http://localhost:{port}/openapi.json")
+            if name not in tool_map.keys():
                 raise ValueError(f"Unknown tool: {name}")
 
 
-            config = tool_config[name]
-            url = f"http://localhost:8000/{config['endpoint']}"
-            headers = {
-                "accept": "application/json",
-                "Content-Type": "application/json"
-            }
+            # config = tool_config[name]
+            # url = f"http://localhost:{port}/{config['endpoint']}"
+            print("ABOUT TO CALL THE TOOL", name)
+            url = f"http://localhost:{port}/{tool_map[name]['endpoint']}"
+            headers = tool_map[name]['headers']
 
-            # Build the request data dynamically
-            data = config["build_data"](arguments or {})
+            # data = config["build_data"](arguments or {})
+            data = tool_map[name]['build_data'](arguments or {})
 
             response = requests.post(url, json=data, headers=headers)
             response.raise_for_status()
@@ -126,7 +103,7 @@ def register_handlers():
             logger.error(f"Error calling tool {name}: {e}")
             return [TextContent(type="text", text=f"Error calling tool {name}: {str(e)}")]
 
-
+# Return of the Register Handlers
 # For the purposes of testing, return the handlers so they can be manually invoked by tests
     return { "list_tools": list_tools, "call_tool": call_tool }
 
