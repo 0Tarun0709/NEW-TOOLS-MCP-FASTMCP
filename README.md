@@ -11,6 +11,34 @@ This repository showcases an experimental Model Context Protocol (MCP) server im
 
 ## Sequence Flow Diagram
 
+```mermaid
+sequenceDiagram
+    participant Client
+    participant SSE Server
+    participant Parser
+    participant Tool Registry
+    participant Swagger API
+
+    Client->>SSE Server: Connect to SSE endpoint
+    SSE Server-->>Client: Connection established
+    
+    Swagger API->>Parser: Load swagger.json
+    Parser->>Tool Registry: Extract & Register Tools
+    Note over Parser,Tool Registry: Dynamic Tool Generation
+    
+    Client->>SSE Server: Request tool list
+    SSE Server->>Tool Registry: Get available tools
+    Tool Registry-->>SSE Server: Return tool list
+    SSE Server-->>Client: Stream tool list
+    
+    Client->>SSE Server: Call tool
+    SSE Server->>Tool Registry: Lookup tool
+    Tool Registry-->>SSE Server: Return tool implementation
+    SSE Server->>Swagger API: Execute API call
+    Swagger API-->>SSE Server: API Response
+    SSE Server-->>Client: Stream result
+```
+
 
 ## Usage
 - Run a Sample FastAPI server: `python sample-fastapi-server.py`
