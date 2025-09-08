@@ -32,10 +32,10 @@ def expand_schema_2(schema: dict, spec: dict):
     return schema
 
 
-def parse_openapi_2_to_tools():
-    # response = requests.get(url)
-    # response.raise_for_status()
-    swagger_json = swg2
+def parse_openapi_2_to_tools(url: str):
+    response = requests.get(url)
+    response.raise_for_status()
+    swagger_json = response.json()
     tools = []
     tool_map = {}
 
