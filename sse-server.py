@@ -13,7 +13,7 @@ from starlette.routing import Route, Mount
 from starlette.applications import Starlette
 import uvicorn
 from parser import parse_openapi_to_tools
-port=8000
+port=8002
 # global input_scheme
 
 mcp=Server(
@@ -26,56 +26,9 @@ def register_handlers():
     @mcp.list_tools()
     async def list_tools() -> List[Tool]:
         """Return a list of tools based on the OpenAPI spec endpoints."""
-        
-        #
-        # NEED TO IMPORT AN FUNCTION WHICH TAKES THE .json as input and Fetches
-        # the endpoints Arguments, parameters into it.
-        # logger.info("Listing available tools")
-        # tools = []
-        
-        # # Create the tool definition
-        # tool = Tool(
-        #     name="ADD",
-        #     inputSchema=input_scheme[0]
-        # )
-        # tool2=Tool(
-        #     name='Multiply',
-        #     inputSchema=input_scheme[1]
-        # )
-        # tool3=Tool(
-        #     name="weather",
-        #     inputSchema=input_scheme[2]
-        # )
-        
-        # tools.append(tool)
-        # tools.append(tool2)
-        # tools.append(tool3)
-        # logger.info(f"Total tools available: {len(tools)}")
-        # return tools
-        tools,tool_map=parse_openapi_to_tools(f"http://localhost:{port}/openapi.json")
+        tools,_=parse_openapi_to_tools(f"http://localhost:{port}/openapi.json")
         return tools
-    # tool_config = {
-    #     "ADD": {
-    #         "endpoint": "add",
-    #         "build_data": lambda args: {
-    #             "a": args.get("a"),
-    #             "b": args.get("b")
-    #         }
-    #     },
-    #     "Multiply": {
-    #         "endpoint": "multiply",
-    #         "build_data": lambda args: {
-    #             "a": args.get("a"),
-    #             "b": args.get("b")
-    #         }
-    #     },
-    #     "weather": {
-    #         "endpoint": "get_alerts",
-    #         "build_data": lambda args: {
-    #             "state": args.get("state")
-    #         }
-    #     }
-    # }
+
     @mcp.call_tool()
     async def call_tool(name: str, arguments: dict | None):
         try:
@@ -84,9 +37,6 @@ def register_handlers():
             if name not in tool_map.keys():
                 raise ValueError(f"Unknown tool: {name}")
 
-
-            # config = tool_config[name]
-            # url = f"http://localhost:{port}/{config['endpoint']}"
             print("ABOUT TO CALL THE TOOL", name)
             url = f"http://localhost:{port}/{tool_map[name]['endpoint']}"
             headers = tool_map[name]['headers']
